@@ -2,6 +2,8 @@
 # 进行回测，输入一个回测用的DateFrame,算出第1天上涨概率，第N天上涨概率
 import tushare as  ts 
 import pandas as pd
+import datetime
+import time
 
 
 """
@@ -10,10 +12,12 @@ import pandas as pd
    Args:
         stockname: 股票名
         sdate: 指定日期
+        stype: 价格类型 o 开盘价  c 收盘价  h 最高价 l 最低价
         
     Returns:
         指定日期里面的股票的开盘价
         For example: 59
+        如果该时间内没价格价格为 0
 
     Raises:
         IOError: An error occurred accessing the bigtable.Table object.
@@ -51,7 +55,14 @@ if __name__ == "__main__":
     
     stockK = ts.get_k_data('600036',start='2018-02-01',end='2018-02-01',ktype='D')
     a = getOpenPrice('600036','2018-02-01',stype='o')
-    print(a)
+    #print(a)
+    #print(stockK)
+    tmp = datetime.datetime.now()
+    if (tmp.weekday() ==4) :
+        nextwork_day = datetime.date.today() + datetime.timedelta(days=3)
+    elif (tmp.weekday()==5):
+        nextwork_day = datetime.date.today() +datetime.timedelta(days=2)
+    else:
+        nextwork_day = datetime.date.today() + datetime.timedelta(days=1)
     
-    print(stockK)
-    print(a)
+    print(nextwork_day)
