@@ -66,7 +66,12 @@ if __name__ == "__main__":
     a = getPriceByStep('600036','2018-02-01',3,stype='o')
     print(a)
     #print(stockK)
-    #print('===================')
+    
+    print('===================')
+
+    #遍历dfcomment
+    for indexs in dfcomment.index:
+        print(dfcomment[indexs:indexs+1].values[0][1])
     #print(stockK[0:1])
     
     
