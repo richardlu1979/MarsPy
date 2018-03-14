@@ -1,4 +1,5 @@
 # -- coding: utf-8 --
+
 # 进行回测，输入一个回测用的DateFrame,算出第1天上涨概率，第N天上涨概率
 import tushare as  ts 
 import pandas as pd
@@ -7,11 +8,12 @@ import time
 
 
 """
-   getOpenPrice得到一支股票在一个日期里面的开盘价或收盘价
-
+   getPriceByStep得到一支股票在一个指定开始日期后step个日子后的开盘价或收盘价
+   
    Args:
         stockname: 股票名
-        sdate: 指定日期
+        beginday: 指定开始日期
+        step:从开始日期后的天数,0是第一条，step+1条
         stype: 价格类型 o 开盘价  c 收盘价  h 最高价 l 最低价
         
     Returns:
@@ -22,8 +24,12 @@ import time
     Raises:
         IOError: An error occurred accessing the bigtable.Table object.
     """
-def getOpenPrice(stockname,sdate,stype='o'):
-    tmpDf = ts.get_k_data(stockname,start=sdate,end=sdate,ktype='D')
+def getPriceByStep(stockname,beginday,step=0,stype='o'):
+    #算法：从得到begindate对应的记录后，向后读取step条记录
+    Df = ts.get_k_data(stockname,start=beginday,ktype='D')
+    tmpDf = Df[step:step+1]
+    
+
     if stype == 'o':
         if tmpDf.iloc[:,0].size > 0 :
             return tmpDf.values[0][1]
@@ -43,6 +49,9 @@ def getOpenPrice(stockname,sdate,stype='o'):
     else:
         return 0
 
+    
+
+
 
 #main函数
 
@@ -53,16 +62,11 @@ if __name__ == "__main__":
                              ['2018-02-03','000028'],
                              ['2018-02-11','300028']],columns=['enterdate','stockname'])  
     
-    stockK = ts.get_k_data('600036',start='2018-02-01',end='2018-02-01',ktype='D')
-    a = getOpenPrice('600036','2018-02-01',stype='o')
-    #print(a)
+    stockK = ts.get_k_data('600036',start='2018-02-01',end='2018-02-15',ktype='D')
+    a = getPriceByStep('600036','2018-02-01',3,stype='o')
+    print(a)
     #print(stockK)
-    tmp = datetime.datetime.now()
-    if (tmp.weekday() ==4) :
-        nextwork_day = datetime.date.today() + datetime.timedelta(days=3)
-    elif (tmp.weekday()==5):
-        nextwork_day = datetime.date.today() +datetime.timedelta(days=2)
-    else:
-        nextwork_day = datetime.date.today() + datetime.timedelta(days=1)
+    #print('===================')
+    #print(stockK[0:1])
     
-    print(nextwork_day)
+    
